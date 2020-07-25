@@ -1,0 +1,13 @@
+<!--
+ Copyright (c) 2020 Ahmed Eldemery
+ 
+ This software is released under the MIT License.
+ https://opensource.org/licenses/MIT
+-->
+
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+    <gresource prefix="/github/aeldemery/gtk4_dnd">
+        <file>dnd.css</file>
+    </gresource>
+</gresources>
