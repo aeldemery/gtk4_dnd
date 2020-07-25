@@ -33,4 +33,4 @@ Clone the repository then
 
 ## Animation <a name = "animation"></a>
 
-![Animation](https://github.com/aeldemery/gtk4_dnd/blob/master/Peek%201.png)
+![Animation](https://github.com/aeldemery/gtk4_dnd/blob/master/Peek%201.gif)
