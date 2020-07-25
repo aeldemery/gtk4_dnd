@@ -55,6 +55,51 @@ public class Gtk4Demo.MainWindow : Gtk.ApplicationWindow {
         main_vbox.append (fixed);
         main_vbox.append (h_sw);
 
+        ///////////////////////////////
+        var source = new Gtk.DragSource ();
+        source.prepare.connect ((source_origin, x, y) => {
+            print ("Drag Prepare\n");
+            var fixed_widget = source_origin.get_widget ();
+            var picked_widget = fixed_widget.pick (x, y, Gtk.PickFlags.DEFAULT);
+            var item = picked_widget.get_ancestor (typeof (CanvasItem));
+            if (item == null) return null;
+            fixed_widget.set_data<CanvasItem>("dragged-item", (CanvasItem) item);
+            return new Gdk.ContentProvider.for_value (item);
+        });
+        source.drag_begin.connect ((source_origin, drag) => {
+            print ("Drag Begin\n");
+            var fixed_widget = source_origin.get_widget ();
+            var item = fixed_widget.get_data<CanvasItem>("dragged-item");
+            var paintable = item.get_drag_icon ();
+            source_origin.set_icon (paintable, (int) item.center, (int) item.center);
+            item.set_opacity (0.3);
+        });
+        source.drag_end.connect ((source_origin, drag, delete_data) => {
+            print ("Drag End\n");
+            var fixed_widget = source_origin.get_widget ();
+            var item = fixed_widget.get_data<CanvasItem>("dragged-item");
+            item.set_opacity (1.0);
+            fixed_widget.set_data ("dragged-item", null);
+        });
+        source.drag_cancel.connect ((source_origin, drag, reason) => {
+            print ("Drag Cancel\n");
+            return false;
+        });
+        fixed.add_controller (source);
+
+
+        var target = new Gtk.DropTarget (typeof (Gtk.Widget), Gdk.DragAction.MOVE);
+        target.on_drop.connect ((drop_target, value, x, y) => {
+            print ("Drag Drop\n");
+            var item = (CanvasItem) value;
+            print ("%p\n", item);
+            var fixed_parent = (Gtk.Fixed)drop_target.get_widget ();
+            print ("x = %f, y = %f\n", x, y);
+            fixed_parent.move (item, x, y);
+            return true;
+        });
+        fixed.add_controller (target);
+
         this.set_child (main_vbox);
     }
 }

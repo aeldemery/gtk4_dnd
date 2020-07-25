@@ -6,7 +6,8 @@ public class Gtk4Demo.CanvasItem : Gtk.Widget {
 
     double angle = 0;
     double delta = 0;
-    double center = 0;
+    
+    public double center {get; set; default = 0;}
 
     static uint item_id;
 
@@ -81,35 +82,6 @@ public class Gtk4Demo.CanvasItem : Gtk.Widget {
             }
         });
         fixed.add_controller (click_gesture);
-
-        var source = new Gtk.DragSource ();
-        source.prepare.connect ((source_origin, x, y) => {
-            this.get_parent ().set_data<CanvasItem>("dragged-item", this);
-            return new Gdk.ContentProvider.for_value (this);
-        });
-        source.drag_begin.connect ((source_origin, drag) => {
-            source_origin.set_icon (get_drag_icon (), (int) center, (int) center);
-            this.set_opacity (0.3);
-        });
-        source.drag_end.connect ((source_origin, drag, delete_data) => {
-            this.get_parent ().set_data ("dragged-item", null);
-            this.set_opacity (1.0);
-        });
-        source.drag_cancel.connect ((source_origin, drag, reason) => {
-            return false;
-        });
-        fixed.add_controller (source);
-
-
-        var target = new Gtk.DropTarget (typeof (CanvasItem), Gdk.DragAction.MOVE);
-        target.on_drop.connect ((value, x, y) => {
-            var item = (CanvasItem) value;
-            assert_nonnull (item);
-            var fixed_parent = (Gtk.Fixed)item.get_parent();
-            fixed_parent.move (item, x, y);
-            return true;
-        });
-        this.get_parent().add_controller (target);
 
         fixed.set_parent (this);
         entry.set_parent (this);
