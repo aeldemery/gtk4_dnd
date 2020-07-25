@@ -87,7 +87,6 @@ public class Gtk4Demo.MainWindow : Gtk.ApplicationWindow {
         });
         fixed.add_controller (source);
 
-
         var target = new Gtk.DropTarget (typeof (CanvasItem), Gdk.DragAction.MOVE);
         target.on_drop.connect ((drop_target, value, x, y) => {
             print ("Drag Drop\n");
@@ -99,6 +98,46 @@ public class Gtk4Demo.MainWindow : Gtk.ApplicationWindow {
             return true;
         });
         fixed.add_controller (target);
+
+        var gesture_click = new Gtk.GestureClick ();
+        gesture_click.set_button (0);
+        gesture_click.pressed.connect ((gesture, n_press, x, y) => {
+            print ("Gesture Pressed\n");
+            var fixed_widget = gesture.get_widget ();
+            var picked_widget = fixed_widget.pick (x, y, Gtk.PickFlags.DEFAULT);
+            var item = picked_widget.get_ancestor (typeof (CanvasItem));
+
+            if (gesture.get_current_button () == Gdk.BUTTON_SECONDARY) {
+                var menu = new Gtk.Popover ();
+                menu.set_parent (fixed_widget);
+                menu.has_arrow = false;
+                menu.pointing_to = { (int) x, (int) y, 1, 1 };
+
+                var menu_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
+                menu.set_child (menu_box);
+
+                var button = new Gtk.Button.with_label ("New");
+                button.has_frame = false;
+                menu_box.append (button);
+
+                menu_box.append (new Gtk.Separator (Gtk.Orientation.HORIZONTAL));
+
+                button = new Gtk.Button.with_label ("Edit");
+                button.has_frame = false;
+                button.sensitive = item != null && item != fixed_widget;
+                menu_box.append (button);
+
+                menu_box.append (new Gtk.Separator (Gtk.Orientation.HORIZONTAL));
+
+                button = new Gtk.Button.with_label ("Delete");
+                button.has_frame = false;
+                button.sensitive = item != null && item != fixed_widget;
+                menu_box.append (button);
+
+                menu.popup ();
+            }
+        });
+        fixed.add_controller (gesture_click);
 
         this.set_child (main_vbox);
     }
