@@ -4,6 +4,7 @@
 
 - [About](#about)
 - [Screenshot](#screenshot)
+- [Animation](#animation)
 
 ## About <a name = "about"></a>
 
@@ -29,3 +30,7 @@ Clone the repository then
 ## Screenshot <a name = "screenshot"></a>
 
 ![Screenshot](https://github.com/aeldemery/gtk4_dnd/blob/master/Screenshot%201.png)
+
+## Animation <a name = "animation"></a>
+
+![Animation](https://github.com/aeldemery/gtk4_dnd/blob/master/Peek%201.png)
