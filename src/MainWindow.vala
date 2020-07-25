@@ -88,7 +88,7 @@ public class Gtk4Demo.MainWindow : Gtk.ApplicationWindow {
         fixed.add_controller (source);
 
 
-        var target = new Gtk.DropTarget (typeof (Gtk.Widget), Gdk.DragAction.MOVE);
+        var target = new Gtk.DropTarget (typeof (CanvasItem), Gdk.DragAction.MOVE);
         target.on_drop.connect ((drop_target, value, x, y) => {
             print ("Drag Drop\n");
             var item = (CanvasItem) value;
