@@ -1,4 +1,7 @@
 public class Gtk4Demo.MainWindow : Gtk.ApplicationWindow {
+
+    Gtk.Fixed fixed;
+
     public MainWindow (Gtk.Application app) {
         Object (application: app);
     }
@@ -20,7 +23,7 @@ public class Gtk4Demo.MainWindow : Gtk.ApplicationWindow {
 
         var main_vbox = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
 
-        var fixed = new Gtk.Fixed ();
+        fixed = new Gtk.Fixed ();
         fixed.hexpand = true;
         fixed.vexpand = true;
         fixed.add_css_class ("frame");
@@ -118,6 +121,7 @@ public class Gtk4Demo.MainWindow : Gtk.ApplicationWindow {
 
                 var button = new Gtk.Button.with_label ("New");
                 button.has_frame = false;
+                button.clicked.connect (new_item_cb);
                 menu_box.append (button);
 
                 menu_box.append (new Gtk.Separator (Gtk.Orientation.HORIZONTAL));
@@ -125,6 +129,7 @@ public class Gtk4Demo.MainWindow : Gtk.ApplicationWindow {
                 button = new Gtk.Button.with_label ("Edit");
                 button.has_frame = false;
                 button.sensitive = item != null && item != fixed_widget;
+                button.clicked.connect (edit_item_cb);
                 menu_box.append (button);
 
                 menu_box.append (new Gtk.Separator (Gtk.Orientation.HORIZONTAL));
@@ -132,6 +137,7 @@ public class Gtk4Demo.MainWindow : Gtk.ApplicationWindow {
                 button = new Gtk.Button.with_label ("Delete");
                 button.has_frame = false;
                 button.sensitive = item != null && item != fixed_widget;
+                button.clicked.connect (delete_item_cb);
                 menu_box.append (button);
 
                 menu.popup ();
@@ -140,5 +146,40 @@ public class Gtk4Demo.MainWindow : Gtk.ApplicationWindow {
         fixed.add_controller (gesture_click);
 
         this.set_child (main_vbox);
+    }
+
+    void new_item_cb (Gtk.Button btn) {
+        var popover = (Gtk.Popover)btn.get_ancestor (typeof (Gtk.Popover));
+        Gdk.Rectangle rect = {};
+        rect = popover.pointing_to;
+        var item = new CanvasItem ();
+        fixed.put (item, rect.x, rect.y);
+        popover.popdown ();
+    }
+
+    void edit_item_cb (Gtk.Button btn) {
+        var popover = (Gtk.Popover)btn.get_ancestor (typeof (Gtk.Popover));
+        popover.popdown ();
+        Gdk.Rectangle rect = {};
+        rect = popover.pointing_to;
+
+        var picked_widget = fixed.pick (rect.x, rect.y, Gtk.PickFlags.DEFAULT);
+        var item = (CanvasItem) picked_widget.get_ancestor (typeof (CanvasItem));
+        if (item != null) {
+            item.start_editing ();
+        }
+    }
+
+    void delete_item_cb (Gtk.Button btn) {
+        var popover = (Gtk.Popover)btn.get_ancestor (typeof (Gtk.Popover));
+        popover.popdown ();
+        Gdk.Rectangle rect = {};
+        rect = popover.pointing_to;
+
+        var picked_widget = fixed.pick (rect.x, rect.y, Gtk.PickFlags.DEFAULT);
+        var item = (CanvasItem) picked_widget.get_ancestor (typeof (CanvasItem));
+        if (item != null) {
+            fixed.remove(item);
+        }
     }
 }

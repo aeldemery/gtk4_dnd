@@ -6,8 +6,8 @@ public class Gtk4Demo.CanvasItem : Gtk.Widget {
 
     double angle = 0;
     double delta = 0;
-    
-    public double center {get; set; default = 0;}
+
+    public double center { get; set; default = 0; }
 
     static uint item_id;
 
@@ -86,6 +86,17 @@ public class Gtk4Demo.CanvasItem : Gtk.Widget {
         fixed.set_parent (this);
         entry.set_parent (this);
         scale.set_parent (this);
+    }
+
+    public void start_editing () {
+        entry.visible = true;
+        scale.visible = true;
+        entry.grab_focus ();
+    }
+
+    public void stop_editing () {
+        entry.visible = false;
+        scale.visible = false;
     }
 
     protected override void dispose () {
