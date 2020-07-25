@@ -28,4 +28,4 @@ Clone the repository then
 
 ## Screenshot <a name = "screenshot"></a>
 
-![Screenshot](https://github.com/aeldemery/gtk4_dragndrop/blob/master/Screenshot%201.png)
+![Screenshot](https://github.com/aeldemery/gtk4_dnd/blob/master/Screenshot%201.png)
