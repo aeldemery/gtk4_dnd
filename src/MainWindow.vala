@@ -61,36 +61,42 @@ public class Gtk4Demo.MainWindow : Gtk.ApplicationWindow {
         ///////////////////////////////
         var source = new Gtk.DragSource ();
         source.prepare.connect ((source_origin, x, y) => {
-            print ("Drag Prepare\n");
             var fixed_widget = source_origin.get_widget ();
             var picked_widget = fixed_widget.pick (x, y, Gtk.PickFlags.DEFAULT);
+
+            if (picked_widget.get_type () != typeof(Gtk.Label)) return null;
+
             var item = picked_widget.get_ancestor (typeof (CanvasItem));
-            if (item == null) return null;
-            fixed_widget.set_data<CanvasItem>("dragged-item", (CanvasItem) item);
-            return new Gdk.ContentProvider.for_value (item);
+
+            var item_fixed = item.get_first_child();
+            var item_label = item_fixed.get_first_child();
+            
+            fixed_widget.set_data<Gtk.Label>("dragged-item", (Gtk.Label) item_label);
+            return new Gdk.ContentProvider.for_value (item_label);
         });
         source.drag_begin.connect ((source_origin, drag) => {
-            print ("Drag Begin\n");
             var fixed_widget = source_origin.get_widget ();
-            var item = fixed_widget.get_data<CanvasItem>("dragged-item");
-            var paintable = item.get_drag_icon ();
-            source_origin.set_icon (paintable, (int) item.center, (int) item.center);
-            item.set_opacity (0.3);
+            var item_label = fixed_widget.get_data<Gtk.Label>("dragged-item");
+
+            var paintable = new Gtk.WidgetPaintable(item_label);
+            var canvas_item = (CanvasItem)item_label.get_ancestor(typeof(CanvasItem));
+
+            source_origin.set_icon (paintable, (int) canvas_item.center, (int) canvas_item.center);
+            item_label.set_opacity (0.3);
         });
         source.drag_end.connect ((source_origin, drag, delete_data) => {
-            print ("Drag End\n");
             var fixed_widget = source_origin.get_widget ();
-            var item = fixed_widget.get_data<CanvasItem>("dragged-item");
-            item.set_opacity (1.0);
+            var item_label = fixed_widget.get_data<Gtk.Label>("dragged-item");
+
+            item_label.set_opacity (1.0);
             fixed_widget.set_data ("dragged-item", null);
         });
         source.drag_cancel.connect ((source_origin, drag, reason) => {
-            print ("Drag Cancel\n");
             return false;
         });
         fixed.add_controller (source);
 
-        var target = new Gtk.DropTarget (typeof (CanvasItem), Gdk.DragAction.MOVE);
+        var target = new Gtk.DropTarget (typeof (Gtk.Widget), Gdk.DragAction.MOVE);
         target.on_drop.connect ((drop_target, value, x, y) => {
             print ("Drag Drop\n");
             var item = (CanvasItem) value;
@@ -105,7 +111,6 @@ public class Gtk4Demo.MainWindow : Gtk.ApplicationWindow {
         var gesture_click = new Gtk.GestureClick ();
         gesture_click.set_button (0);
         gesture_click.pressed.connect ((gesture, n_press, x, y) => {
-            print ("Gesture Pressed\n");
             var fixed_widget = gesture.get_widget ();
             var picked_widget = fixed_widget.pick (x, y, Gtk.PickFlags.DEFAULT);
             var item = picked_widget.get_ancestor (typeof (CanvasItem));

@@ -14,12 +14,15 @@ public class Gtk4Demo.CanvasItem : Gtk.Widget {
     construct {
         ++item_id;
         var layout = new Gtk.BoxLayout (Gtk.Orientation.VERTICAL);
-        layout.spacing = 5;
+        layout.spacing = 30;
+        layout.homogeneous = false;
         this.set_layout_manager (layout);
         this.set_css_name ("item");
 
         label = new Gtk.Label (@"Item $item_id");
         label.name = @"item$item_id";
+        label.vexpand = true;
+        label.hexpand = true;
         label.add_css_class ("canvasitem");
         label.add_css_class ("frame");
 
@@ -37,6 +40,8 @@ public class Gtk4Demo.CanvasItem : Gtk.Widget {
         });
 
         fixed = new Gtk.Fixed ();
+        fixed.hexpand = true;
+        fixed.vexpand = true;
         fixed.put (label, 0, 0);
 
         scale = new Gtk.Scale.with_range (Gtk.Orientation.HORIZONTAL, 0, 360, 1);
