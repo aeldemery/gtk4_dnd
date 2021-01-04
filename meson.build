@@ -13,7 +13,7 @@ sources = files(
 dependencies = [
     dependency ('glib-2.0'),
     dependency ('gobject-2.0'),
-    dependency ('gtk4'),
+    dependency ('gtk4', version: '>= 4.0.0'),
     meson.get_compiler('c').find_library('m', required: false),
 ]
 

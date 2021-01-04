@@ -141,7 +141,7 @@ public class Gtk4Demo.CanvasItem : Gtk.Widget {
         }
 
         provider = new Gtk.CssProvider ();
-        provider.load_from_buffer (css_str.data);
+        provider.load_from_data (css_str.data);
 
         label.get_style_context ().add_provider (provider, 800);
 
